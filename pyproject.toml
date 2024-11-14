@@ -7,6 +7,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
+bs4 = "^0.0.2"
+lxml = "^5.3.0"
+pandas = "^2.2.3"
 
 
 [build-system]

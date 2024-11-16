@@ -1,6 +1,7 @@
 import bs4 as bs
 import urllib.request
 import pandas as pd
+import uuid
 
 SNEAK_START_YEAR = 1995
 SCRAPE_TO_YEAR = 2024
@@ -26,8 +27,6 @@ def main():
         soup = bs.BeautifulSoup(histroy_page,'lxml')
         results_of_year = soup.find_all(sneak_movie_selector)
 
-
-
         sneak_nr = ""
         sneak_date = ""
         movietitle = ""
@@ -39,7 +38,7 @@ def main():
 
             if idx % 2 == (1 if order else 0):
                 splits = content.split(" ", 1)
-                sneak_nr = splits[0]
+                sneak_nr = splits[0].replace("#", "")
                 try:
                     sneak_date = f' {splits[1]} {sneak_year}'
                 except:
@@ -54,9 +53,10 @@ def main():
 
                 df = append_row(df, new_row)
 
-
-    print(df)
     df.to_csv("out.csv", encoding='utf-8')
+    with open("inserts.sql", "w") as f:
+        for index, row in df.iterrows():
+            f.writelines(f'INSERT INTO public.sneaks VALUES (\'{str(uuid.uuid4())}\', \'{row['sneak_nr']}\', \'{row['movie_title'].replace("'", "''")}\', \'{row['sneak_date']}\', null); \n')
 
 
 
